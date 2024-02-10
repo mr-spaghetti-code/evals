@@ -197,6 +197,8 @@ def run(args: OaiEvalArguments, registry: Optional[Registry] = None) -> str:
         else args.record_path
     )
 
+
+
     if args.http_run:
         args.local_run = False
     elif args.local_run:
@@ -230,8 +232,8 @@ def run(args: OaiEvalArguments, registry: Optional[Registry] = None) -> str:
     for key, value in result.items():
         logger.info(f"{key}: {value}")
 
-    with open("./results/result_tmp.json", "w") as f:
-        json.dump(result, f)
+    with open("./results/runs.txt", "a") as f:
+        f.write(f"\n./results/evallogs/{run_spec.run_id}_{args.completion_fn}_{args.eval}.jsonl")
     return run_spec.run_id
 
 

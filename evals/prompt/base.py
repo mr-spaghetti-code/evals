@@ -141,7 +141,6 @@ class CrosshatchChatCompletionPrompt(Prompt):
         return text_prompt_to_chat_prompt(prompt)
 
     def to_formatted_prompt(self) -> CrosshatchCreateChatPrompt:
-        print("FORMATTING TO CROSSHATCH")
         # print(self.raw_prompt)
         if is_chat_prompt(self.raw_prompt):
             return modify_prompt_for_crosshatch(self.raw_prompt)

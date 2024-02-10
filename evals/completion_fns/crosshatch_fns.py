@@ -38,7 +38,7 @@ class RouterCompletionFn(CompletionFn):
             'Content-Type': 'application/json'
         }
         self.router = llm_kwargs['router']
-        print(self.router)
+        print(f"RUNNING EVAL USING ROUTER {self.router}")
 
     def call_router(self, prompt: str) -> str:
         # 
@@ -48,7 +48,7 @@ class RouterCompletionFn(CompletionFn):
                 "router": self.router
             }
         }
-        print(data)
+        # print(data)
         response = self._post_request(data)
         answer = response.content.decode("utf-8")
         if response.status_code != 200:
@@ -76,7 +76,7 @@ class RouterCompletionFn(CompletionFn):
                 raw_prompt=prompt,
             )
         crosshatch_create_prompt: CrosshatchCreateChatPrompt = prompt.to_formatted_prompt()
-        print(crosshatch_create_prompt)
+        # print(crosshatch_create_prompt)
         # prompt = CompletionPrompt(prompt).to_formatted_prompt()
         response = self.call_router(crosshatch_create_prompt)
         record_sampling(prompt=prompt, sampled=response)
