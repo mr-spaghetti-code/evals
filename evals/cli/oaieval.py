@@ -5,6 +5,7 @@ import argparse
 import logging
 import shlex
 import sys
+import json
 from typing import Any, Mapping, Optional, Union, cast
 
 import evals
@@ -191,7 +192,7 @@ def run(args: OaiEvalArguments, registry: Optional[Registry] = None) -> str:
     )
 
     record_path = (
-        f"/tmp/evallogs/{run_spec.run_id}_{args.completion_fn}_{args.eval}.jsonl"
+        f"./results/evallogs/{run_spec.run_id}_{args.completion_fn}_{args.eval}.jsonl"
         if args.record_path is None
         else args.record_path
     )
@@ -228,6 +229,9 @@ def run(args: OaiEvalArguments, registry: Optional[Registry] = None) -> str:
     logger.info("Final report:")
     for key, value in result.items():
         logger.info(f"{key}: {value}")
+
+    with open("./results/result_tmp.json", "w") as f:
+        json.dump(result, f)
     return run_spec.run_id
 
 

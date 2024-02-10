@@ -19,3 +19,4 @@ openai-key.txt
 # Ignore run_experiments.sh results
 evals/elsuite/**/logs/
 evals/elsuite/**/outputs/
+*.jsonl

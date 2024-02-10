@@ -1,0 +1,6 @@
+crosshatch_router:
+  class: evals.completion_fns.crosshatch_fns:RouterCompletionFn
+  args:
+    provider: Crosshatch
+    llm_kwargs:
+      router: DecentAIChatRouter

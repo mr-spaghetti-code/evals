@@ -19,6 +19,10 @@ OpenAIChatMessage = Dict[str, str]  # A message is a dictionary with "role" and 
 OpenAICreateChatPrompt = List[OpenAIChatMessage]  # A chat log is a list of messages
 
 
+CrosshatchChatMessage = Dict[str, str]  # A message is a dictionary with "id", "role" and "content" keys
+CrosshatchCreateChatPrompt = List[CrosshatchChatMessage]  # A chat log is a list of messages
+
+
 def chat_prompt_to_text_prompt(prompt: OpenAICreateChatPrompt, for_completion: bool = True) -> str:
     """
     Render a chat prompt as a text prompt. User and assistant messages are separated by newlines
@@ -48,6 +52,11 @@ def chat_prompt_to_text_prompt(prompt: OpenAICreateChatPrompt, for_completion: b
         text += "Assistant: "
     return text.lstrip()
 
+
+def modify_prompt_for_crosshatch(messages):
+    for message in messages:
+        message.update({"id": "EVAL"})
+    return messages
 
 def text_prompt_to_chat_prompt(prompt: str, role: str = "system") -> OpenAICreateChatPrompt:
     assert isinstance(prompt, str), f"Expected a text prompt, got {prompt}"
@@ -113,3 +122,28 @@ class ChatCompletionPrompt(Prompt):
         if is_chat_prompt(self.raw_prompt):
             return self.raw_prompt
         return self._render_text_as_chat_prompt(self.raw_prompt)
+
+@dataclass
+class CrosshatchChatCompletionPrompt(Prompt):
+    """
+    A `Prompt` object that wraps prompts to be compatible with chat models, which use `openai.ChatCompletion.create`.
+
+    The format expected by chat models is a list of messages, where each message is a dict with "role" and "content" keys.
+    """
+
+    raw_prompt: Union[OpenAICreatePrompt, CrosshatchCreateChatPrompt]
+
+    def _render_text_as_chat_prompt(self, prompt: str) -> CrosshatchCreateChatPrompt:
+        """
+        Render a text string as a chat prompt. The default option we adopt here is to simply take the full prompt
+        and treat it as a system message.
+        """
+        return text_prompt_to_chat_prompt(prompt)
+
+    def to_formatted_prompt(self) -> CrosshatchCreateChatPrompt:
+        print("FORMATTING TO CROSSHATCH")
+        # print(self.raw_prompt)
+        if is_chat_prompt(self.raw_prompt):
+            return modify_prompt_for_crosshatch(self.raw_prompt)
+        return self._render_text_as_chat_prompt(self.raw_prompt)
+
